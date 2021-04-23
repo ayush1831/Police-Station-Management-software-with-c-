@@ -1,0 +1,747 @@
+#include<fstream.h>
+#include<conio.h>
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+/*___________________________________________________________________
+
+			 Structure For Date
+  ___________________________________________________________________*/
+struct Date
+{
+int d;
+int m;
+int y;
+};
+/*___________________________________________________________________
+
+		   Structure For Crime Of Criminal
+  ___________________________________________________________________*/
+struct Court
+{
+char crime[20];
+char act[20];
+char cour[20];
+char state[20];
+};
+/*___________________________________________________________________
+
+	       Structure For Physical Description Of Criminal
+  ___________________________________________________________________*/
+struct descp
+{
+char colour[20];
+char face[20];
+char imark[20];            //Identification Marks
+char height[6];
+};
+/*___________________________________________________________________
+
+		    Structure For Details Of Fir
+  ___________________________________________________________________*/
+struct Police
+{
+char station[50];
+char fir_no[10];
+Date date_arrest;
+};
+/*___________________________________________________________________
+
+       Class 'Criminal' For Getting All Information About Convict
+  ___________________________________________________________________*/
+class Criminal
+{
+char name[20];
+char sex[3];
+char criminal_id[10];
+char age[4];
+char address[50];          //Address Of Criminal Before Arrest
+Court court;
+Police police;
+descp des;
+public:
+int ncheck(char arr[]);
+int s_check(char a[]);
+void input(void);
+void output(void);
+void delete_rec(char criminalid[]);
+int dcheck(char n[]);
+void display();
+void remove();
+int  menu();
+void modify();
+void list();
+void empty();
+int concheck(char b[]);
+};
+// ====================> End of Class Criminal<=============================
+
+/*___________________________________________________________________
+
+	  Function For Checking Whether Input Is Correct
+  ___________________________________________________________________*/
+int Criminal::ncheck (char arr[])
+{
+int i=0;
+while(arr[i]!='\0')
+{
+if( ((arr[i]>=65) && (arr[i]<=90)) || ((arr[i]>=97) &&
+		    (arr[i]<=122)) || (arr[i]==' ') )
+{
+i++;
+continue;
+}
+else
+{
+cout<<"\n Incorrect Input ,Try Again!! \n";
+return 0;
+}
+}
+return 1;
+}
+/*___________________________________________________________________
+
+	 Function For Checking Whether Sex Is Given Correctly
+  ___________________________________________________________________*/
+int Criminal::s_check(char a[])
+{
+clrscr();
+if(a[0]=='m'|| a[0]=='f'|| a[0]=='M'|| a[0]=='F')
+{
+return(1);
+}
+else
+{
+cout<<"\n Incorrect Input ,Try Again!! \n";
+return(0);
+}
+}
+/*___________________________________________________________________
+
+		 Function For Getting Convict's Record
+  ___________________________________________________________________*/
+void Criminal::input(void)
+
+{
+clrscr();
+this->empty();
+Criminal x;
+int c=0;
+fstream fin;
+fin.open("jail.dat",ios::app | ios::binary);
+while(!c)
+{
+cout<<"\n Enter the Criminal ID : ";
+gets(this->criminal_id);
+c=x.concheck(this->criminal_id);
+}
+c=0;
+while(!c)
+{
+cout<<"\n Enter Name of The Criminal : ";
+gets(this->name);
+c=ncheck(this->name);
+}
+c=0;
+while(!c)
+{
+cout<<"\n Enter Sex : ";
+gets(this->sex);
+c=s_check(this->sex);
+}
+cout<<"\n Enter Address : ";
+gets(this->address);
+cout<<"\n Enter Age : ";
+gets(this->age);
+clrscr();
+cout<<"\n\t\t\t\t Enter Description \n\t\t";
+c=0;
+while(!c)
+{
+cout<<"\n Enter Colour : ";
+gets(this->des.colour);
+c=ncheck(this->des.colour);
+}
+c=0;
+while(!c)
+{
+cout<<"\n Face Description : ";
+gets(this->des.face);
+c=ncheck(this->des.face);
+}
+cout<<"\n Enter Height(in cm's) : ";
+gets(this->des.height);
+cout<<"\n Enter Identification Marks(if no distinguishing marks,enter none) : ";
+gets(this->des.imark);
+clrscr();
+cout<<"\n\t\t\t\t Enter \n\n\t\t";
+c=0;
+while(!c)
+{
+cout<<"\n Court(from which the prisonor convicted) : ";
+gets(this->court.cour);
+c= ncheck(this->court.cour);
+}
+c=0;
+while(!c)
+{
+cout<<"\n State : ";
+gets(this->court.state);
+c=ncheck(this->court.state);
+}
+c=0;
+while(!c)
+{
+cout<<"\n Crime : ";
+gets(this->court.crime);
+c=ncheck(this->court.crime);
+}
+cout<<"\n Act(under which convicted) : ";
+gets(this->court.act);
+clrscr();
+cout<<"\n\t\t Enter \n\n\t\t";
+cout<<"\n Complete Address of Police Station : ";
+gets(this->police.station);
+cout<<"\n FIR Number : ";
+gets(this->police.fir_no);
+cout<<"\n Date of Arrest (dd/mm/yyyy) : ";
+c=0;
+while(!c)
+{
+cout<<"\n\t\t\t Day : ";
+cin>>this->police.date_arrest.d;
+if((this->police.date_arrest.d>31) || (this->police.date_arrest.d<1))
+{
+cout<<"\n\n Date does not exist ,Try Again!!";
+c=0;
+}
+else
+c=1;
+}
+c=0;
+while(!c)
+{
+cout<<"\n\t\t\t Month : ";
+cin>>this->police.date_arrest.m;
+if((this->police.date_arrest.m>12) || (this->police.date_arrest.m<1))
+{
+cout<<"\n\n Month does not exist ,Try Again!!";
+c=0;
+continue;
+}
+else
+c=1;
+if((this->police.date_arrest.d==31) && ((this->police.date_arrest.m==2)
+  || (this->police.date_arrest.m==4) || ( this->police.date_arrest.m==6)
+  ||( this->police.date_arrest.m==9) || (this->police.date_arrest.m==11)))
+{
+cout<<"\n This month does not have 31 days ,Try Again!!";
+c=0;
+}
+else
+c=1;
+}
+c=0;
+while(!c)
+{
+cout<<"\n\t\t\t Year(in 4 digits) : ";
+cin>>this->police.date_arrest.y;
+if( (this->police.date_arrest.y<1950) || (this->police.date_arrest.y>2019) )
+{
+cout<<"\n Incorrect Input ,Try Again!!";
+c=0;
+}
+else
+c=1;
+}
+char ch;
+do{
+cout<<"\n Do you want to save this information (y or n) : ";
+cin>>ch;
+if(ch=='y' || ch=='Y')
+{
+cout<<"\n\n\t< Record has been saved >";
+fin.write((char*)this,sizeof(Criminal));
+}
+else
+{
+if((ch!='n') && (ch!='N'))
+{
+cout<<"\n Enter Correctly, Try Again!!";
+}
+}
+}while( (ch!='y') && (ch!='Y') && (ch!='n') && (ch!='N') );
+fin.close();
+}//End of input function
+/*___________________________________________________________________
+
+		 Function For Showing Convict's Record
+  ___________________________________________________________________*/
+void Criminal::output()
+{
+clrscr();
+cout<<"\n\t\t\t\t Personal Record of Convict \n";
+cout<<"\n\n Criminal ID : ";
+puts(criminal_id);
+cout<<"\n Name : ";
+puts(this->name);
+cout<<"\n Sex : "<<this->sex;
+cout<<"\n Address : ";
+puts(this->address);
+cout<<"\n Age : ";
+puts(this->age);
+cout<<"\n\n\t\t\t\t Description \n";
+cout<<"\n 1.Colour : ";
+puts(this->des.colour);
+cout<<"\n 2.Face : ";
+puts(this->des.face);
+cout<<"\n 3.Identification Mark : ";
+puts(this->des.imark);
+cout<<"\n 4. Height : ";
+puts(this->des.height);
+cout<<"\n\n\n\n\t\t\t\t\t\t Press a key to continue...";
+getche();
+clrscr();
+cout<<"\n\n\t\t\t\t Criminal Record";
+cout<<"\n\t\t Court Information \n";
+cout<<"\n 1. Court from which Convicted : ";
+puts(this->court.cour);
+cout<<"\n 2. State : ";
+puts(this->court.state);
+cout<<"\n 3. Crime : ";
+puts(this->court.crime);
+cout<<"\n 4. Act under which Convicted : ";
+puts(this->court.act);
+cout<<"\n\n\n\n\t\t\t\t\t\t Press a key to continue...";
+getche();
+clrscr();
+cout<<"\n\n\t\t\t\t Criminal Record ";
+cout<<"\n\n\n Police INFORMATION \n\n";
+cout<<"\n 1. FIR Number : ";
+puts(this->police.fir_no);
+cout<<"\n 2. Date of Arrest : "<<this->police.date_arrest.d<<"/"
+<<police.date_arrest.m<<"/"<<this->police.date_arrest.y;
+cout<<"\n 3. Police Station(where fir was lodged) : ";
+puts(this->police.station);
+cout<<"\n\n\n\n\t\t\t\t\t\t Press a key to continue...";
+getche();
+clrscr();
+}//end of output function
+
+/*___________________________________________________________________
+
+	  Function For Deleting The Record Of A Convict
+  ___________________________________________________________________*/
+void Criminal::delete_rec(char criminalid[])
+
+{
+fstream fin;
+fin.open("jail.dat",ios::in | ios::ate);
+int q=fin.tellg();
+int c=q / sizeof(Criminal);
+fstream temp;
+temp.open("temp.dat",ios::out);
+fin.seekg(0,ios::beg);
+for(int i=0;i<c;i++)
+{
+fin.read((char*)this,sizeof(Criminal));
+if(strcmp(criminalid,criminal_id)!=0)
+temp.write((char*)this,sizeof(Criminal));
+}
+fin.close();
+temp.close();
+fin.open("jail.dat",ios::out);
+temp.open("temp.dat",ios::in | ios::ate);
+int a=temp.tellg();
+int size=a / sizeof(Criminal);
+temp.seekg(0,ios::beg);
+for(int k=0;k<size;k++)
+{
+temp.read((char*)this,sizeof(Criminal));
+fin.write((char*)this,sizeof(Criminal));
+}
+fin.close();
+temp.close();
+cout<<"\n\n\t\t < Record has been deleted >";
+cout<<"\n\n\n\n\t\t\t\t\t\t Press a key to continue...";
+getch();
+}
+
+//-------------------------------------------------------------------
+
+int Criminal::dcheck(char n[])
+{
+clrscr();
+fstream file;
+file.open("jail.dat",ios::in | ios::ate | ios::binary);
+int x=0,count=0,c;
+int q=file.tellg();
+c=q / sizeof(Criminal);
+file.close();
+file.open("jail.dat",ios::in | ios::binary);
+for(int i=0;i<c;i++)
+{
+file.read((char*)this,sizeof(Criminal));
+count++;
+if(strcmp(n,criminal_id)==0)
+{
+x++;
+break;
+}
+}
+if(x==0)
+{
+cout<<"\n Convict Not Found!! ";
+return 0;
+}
+else
+{
+return count;
+}
+file.close();
+}
+/*___________________________________________________________________
+
+		   Function For Displaying Records
+  ___________________________________________________________________*/
+void Criminal::display()
+{
+clrscr();
+char N[10];
+int rec;
+int loc;
+cout<<"\n\n Enter the Criminal ID of Desired Convict : ";
+gets(N);
+fstream file;
+rec= this->dcheck(N);
+file.open("jail.dat",ios::in | ios::binary);
+if(rec!=0)
+{
+loc=(rec-1)*sizeof(Criminal);
+file.seekg(loc);
+file.read((char*)this,sizeof(Criminal));
+this->output();
+}
+file.close();
+}
+
+//-------------------------------------------------------------------
+
+void Criminal::remove()
+{
+clrscr();
+char no[10];
+int s;
+cout<<"\n\n Enter The Criminal ID Of Convict Whose Record Is To Be Deleted : ";
+gets(no);
+s=this->dcheck(no);
+if(s!=0)
+this->delete_rec(no);
+}
+/*___________________________________________________________________
+
+			 Function To Display Main Menu
+  ___________________________________________________________________*/
+int Criminal::menu()
+{
+int ch;
+do
+{
+clrscr();
+cout<<"\n\n\t\t\t Main Menu \n";
+cout<<"\n 1- To Add Record(s)";
+cout<<"\n 2- To Modify Record";
+cout<<"\n 3- To Display Record";
+cout<<"\n 4- To Delete Record";
+cout<<"\n 5- To List";
+cout<<"\n 6- To Quit";
+cout<<"\n Enter your choice(1-6) : ";
+cin>>ch;
+}
+while((ch!=1) && (ch!=2) && (ch!=3) &&
+      (ch!=4) && (ch!=5) && (ch!=6));
+return(ch);
+}
+/*___________________________________________________________________
+
+	 Function For Modifying The Convict's Record
+  ___________________________________________________________________*/
+void Criminal::modify()
+{
+clrscr();
+fstream file;
+char npdr[10],ncrime[10],nact[10],nstate[10],ncourt[10];
+char nstat[10],nfir[10],str[10],nprd[15],cno[10];
+int check,loc;
+Criminal x;
+Date D;
+cout<<"\n\n\t\t\t Modification Function \n";
+cout<<"\n Enter The Criminal ID Of The Convict To Be Modified : ";
+gets(str);
+check=this->dcheck(str);
+if(check!=0)
+{
+file.open("jail.dat",ios::out | ios::ate);
+int d=0;
+while(!d)
+{
+cout<<"\n Enter The Modified Criminal ID : ";
+gets(cno);
+d= x.concheck(cno);
+}
+strcpy(criminal_id,cno);
+cout<<"\n Enter The Modified Crime : ";
+gets(ncrime);
+strcpy(court.crime,ncrime);
+cout<<"\n Enter The Modified Court Record ";
+cout<<"\n Act: ";
+gets(nact);
+strcpy(court.act,nact);
+cout<<"\n State : ";
+gets(nstate);
+strcpy(court.state,nstate);
+cout<<"\n Court : ";
+gets(ncourt);
+strcpy(court.cour,ncourt);
+clrscr();
+cout<<"\n Enter The Modified Police Record ";
+cout<<"\n Station Address : ";
+gets(nstat);
+strcpy(police.station,nstat);
+cout<<"\n FIR Number : ";
+gets(nfir);
+strcpy(police.fir_no,nfir);
+cout<<"\n Date Of Arrest (dd,mm,yyyy) : ";
+int c=0;
+while(!c)
+{
+cout<<"\n\t\t\t Day : ";
+cin>>D.d;
+if((D.d>31) || (D.d<1))
+{
+cout<<"\n\n Date does not exist ,Try Again!!";
+c=0;
+}
+else
+c=1;
+}
+c=0;
+while(!c)
+{
+cout<<"\n\t\t\t Month : ";
+cin>>D.m;
+if((D.m>12) || (D.m<1))
+{
+cout<<"\n\n Month does not exist ,Try Again!!";
+c=0;
+continue;
+}
+else
+c=1;
+if((D.d==31) && ((D.m==2) || (D.m==4) ||( D.m==6) || ( D.m==9) || (D.m==11)))
+{
+cout<<"\n This Month Does Not Have 31 days ,Try Again!!";
+c=0;
+}
+else
+c=1;
+}
+c=0;
+while(!c)
+{
+cout<<"\n\t\t\t Year(in 4 digits) : ";
+cin>>D.y;
+if((D.y<1950) || (D.y>2019))
+{
+cout<<"\n Incorrect Input, Try Again!!";
+c=0;
+}
+else
+c=1;
+}
+police.date_arrest.d=D.d;
+police.date_arrest.m=D.m;
+police.date_arrest.y=D.y;
+loc=(check-1)*sizeof(Criminal);
+file.seekp(loc);
+file.write((char*)this,sizeof(Criminal));
+file.close();
+}
+}
+/*___________________________________________________________________
+
+		 Function To Display List Of Convicts
+  ___________________________________________________________________*/
+void Criminal::list()
+{
+clrscr();
+int j ;
+fstream file;
+file.open("jail.dat",ios::in | ios::ate | ios::binary);
+int q=file.tellg();
+int c=q / sizeof(Criminal);
+file.seekg(0);
+cout<<"\n\n\t\t\t CONVICT LIST \n\n\n";
+cout<<"\n=============================================================================\n";
+cout<<"SNO\tNAME\t\t\tCRIMINAL ID\t\t\tCRIME"<<endl;
+cout<<"\n=============================================================================\n";
+int i=0;
+while(file.read((char*)this,sizeof(Criminal)))
+{
+i++;
+cout<<i<<"       ";
+for(j=0;j<strlen(this->name);j++)
+cout<<this->name[j];
+cout<<"\t\t\t";
+for(j=0;j<strlen(this->criminal_id);j++)
+cout<<this->criminal_id[j];
+cout<<"\t\t\t";
+for(j=0;j<strlen(this->court.crime);j++)
+cout<<this->court.crime[j];
+cout<<"\n-----------------------------------------------------------------------------\n";
+if((i%3)==0 && (i!=c))
+{
+cout<<"\n\n\n\n\t\t\t\t\t\t Press a key to continue...";
+getch();
+clrscr();
+cout<<"\n================================================================================"<<endl;
+cout<<"SNO\tNAME\t\t\tCRIMINAL ID\t\t\tCRIME"<<endl;
+cout<<"================================================================================"<<endl;
+}
+}
+file.close();
+}
+
+//---------------------------------------------------------------------------------------------------
+
+void Criminal::empty()
+{
+int i;
+for(i=0;i<20;i++)
+name[i]=' ';
+for(i=0;i<10;i++)
+criminal_id[i]=' ';
+for(i=0;i<3;i++)
+sex[i]=' ';
+for(i=0;i<4;i++)
+age[i]=' ';
+for(i=0;i<50;i++)
+address[i]=' ';
+for(i=0;i<20;i++)
+court.cour[i]=' ';
+for(i=0;i<20;i++)
+court.crime[i]=' ';
+for(i=0;i<20;i++)
+court.act[i]=' ';
+for(i=0;i<20;i++)
+court.state[i]=' ';
+for(i=0;i<20;i++)
+des.colour[i]=' ';
+for(i=0;i<20;i++)
+des.imark[i]=' ';
+for(i=0;i<20;i++)
+des.face[i]=' ';
+for(i=0;i<6;i++)
+des.height[i]=' ';
+for(i=0;i<50;i++)
+police.station[i]=' ';
+for(i=0;i<10;i++)
+police.fir_no[i]=' ';
+police.date_arrest.m = 0;
+police.date_arrest.d = 0;
+police.date_arrest.y = 0;
+}
+
+//----------------------------------------------------------------------------------------------------------
+
+int Criminal::concheck(char b[])
+{
+fstream  file;
+char a[10];
+int check=0;
+file.open("jail.dat",ios::in | ios::ate);
+int q=file.tellg();
+int size=q / sizeof(Criminal);
+file.seekg(0,ios::beg);
+for(int i=0;i<size;i++)
+{
+file.read((char*)this,sizeof(Criminal));
+strcpy(a,criminal_id);
+if(strcmp(b,a)==0)
+{
+check+=1;
+break;
+}
+}
+if(check==0)
+{
+return(10);
+}
+else
+{
+cout<<"\n Given Criminal ID Already Exist!!";
+return(0);
+}
+file.close();
+}
+/*___________________________________________________________________
+
+			  Main Function
+  ___________________________________________________________________*/
+void main()
+{
+clrscr();
+int x;
+for(int i=0;i<3;i++)
+{
+clrscr();
+cout<<"\n*******************************************************************";
+cout<<"\n**                                                               **";
+cout<<"\n**                      CRIMINAL RECORD                          **";
+cout<<"\n**                                                               **";
+cout<<"\n**                                          By- Ayush Srivastava **";
+cout<<"\n**                                                               **";
+cout<<"\n*******************************************************************";
+cout<<"\n\n\n\n Enter Password : ";
+char pass[10];
+gets(pass);
+x=strcmpi(pass,"abc@123");
+if(x==0)
+{
+break;
+}
+else
+{
+cout<<"\a";
+}
+}
+if(x==0)
+{
+int choice,ans='y';
+Criminal l;
+while((ans=='y' || ans=='Y'))
+{
+choice= l.menu();
+switch(choice)
+{
+case 1:l.input();
+       break;
+case 2:l.modify();
+       break;
+case 3:l.display();
+       break;
+case 4:l.remove() ;
+       break;
+case 5:l.list();
+       break;
+case 6:exit(0);
+default:cout<<"\n Wrong Choice!!";
+}
+cout<<"\n\n Do you want to continue(press y to continue) : ";
+ans=getch();
+if(ans=='y'|| ans=='Y')
+continue;
+}
+}
+}
+
